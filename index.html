@@ -47,10 +47,36 @@ function handleFile(e) {
       console.log("Ready to start");
       var first_sheet_name = workbook.SheetNames[0];
       var worksheet = workbook.Sheets[first_sheet_name];
-      console.log("A1 is " + worksheet['A1']);
+      console.log(rowsToArray(worksheet));
     };
     reader.readAsBinaryString(f);
   }
+}
+
+function rowsToArray(ws) {
+  var cur_row = 0;
+  var rows = [];
+  var temp_row = [];
+    
+  for(z in ws) {
+      if( z[0] === '!' ) continue;
+      if( z[1] === '1' ) continue; // Consider the first row as headings
+      // console.log(z + " is " + ws[z].v);
+      if( cur_row === XLSX.utils.decode_row(z[1])) {
+          temp_row.push(ws[z].v);
+
+      } else {
+          cur_row = XLSX.utils.decode_row(z[1]);
+          if ( temp_row.length > 0 ) {
+              rows.push(temp_row);
+          }
+          temp_row = [ws[z].v];
+      }
+
+  };
+
+  rows.push(temp_row);
+  return rows;
 }
 document.getElementById('files').addEventListener('change', handleFile, false);
 
