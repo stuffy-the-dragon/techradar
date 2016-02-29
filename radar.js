@@ -90,7 +90,9 @@ for (var i = 0; i < radar_data.length; i++) {
 
     var itemsByStage = _.groupBy(radar_data[i].items, function(item) {return Math.floor(item.pc.r / 100)});
     var offsetIndex = 0;
-    for (var stageIdx in _(itemsByStage).keys()) {
+    var keys = _(itemsByStage).keys();
+    for (key in keys) {
+    var stageIdx = keys[key];
 
         if (stageIdx > 0) {
             var length = 0;
