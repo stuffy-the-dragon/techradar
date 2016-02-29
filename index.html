@@ -32,6 +32,8 @@
 
 <script type="text/javascript" charset="utf-8">
 
+var blip_positions = [];
+
 function handleFile(e) {
   var files = e.target.files;
   var i,f;
@@ -92,8 +94,17 @@ function arrayToRadarItem(arr, cat) {
 
     for( i in arr ) {
         if( arr[i][pos_cat] != cat ) continue;
-        var radius = arcNameToRadius(arr[i][pos_rec]); // TODO Hard coded value here
-        var angle = catNameToAngle(cat);
+        var overlapping = true;
+        var count = 0;
+        while(overlapping == true && count < 100)
+        {
+            var radius = arcNameToRadius(arr[i][pos_rec]); // TODO Hard coded value here
+            var angle = catNameToAngle(cat);
+            overlapping = checkOverlappingBlip(radius, angle);
+            count = count + 1;
+        }
+        blip_positions.push({"r":radius, "t":angle});
+        
         var temp_item = {"name":arr[i][pos_name], "pc":{"r":radius,"t":angle},"movement":"c"};
         items.push(temp_item);
     }
@@ -103,11 +114,11 @@ function arrayToRadarItem(arr, cat) {
 function arcNameToRadius(n) {
 
     for ( a in radar_arcs ) {
-        if ( n === radar_arcs[a].name ) return radar_arcs[a].r - 50; // TODO hard coded
+        if ( n === radar_arcs[a].name ){
+            return radar_arcs[a].r - (Math.floor((Math.random() * 80) + 10)); // TODO hard coded
+        }
     }
-
     return 0; // Did not match any of the names
-
 }
 
 function catNameToAngle(catagory){
@@ -116,9 +127,20 @@ function catNameToAngle(catagory){
             return Math.floor((Math.random() * (radar_angle_range[c].e - radar_angle_range[c].s)) + radar_angle_range[c].s);
         }
     }
-
     return 0; // Did not match any of the catagories
+}
 
+function checkOverlappingBlip(r, t){
+    for (pos in blip_positions){
+        if(polar_distance({"r":r,"t":t}, blip_positions[pos]) < 20) return true;
+    }
+    return false;
+}
+
+function polar_distance(a, b){
+    var rad_a = a.t * (2 * Math.PI / 360); // Degrees to rad
+    var rad_b = b.t * (2 * Math.PI / 360);
+    return Math.sqrt(Math.pow(a.r, 2) + Math.pow(b.r, 2) - (2 * a.r * b.r * Math.cos(rad_b - rad_a)));
 }
 
 document.getElementById('files').addEventListener('change', handleFile, false);
