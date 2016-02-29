@@ -6,6 +6,7 @@
 <script type="text/javascript" src="lib/protovis-3.2/protovis-d3.2.js"></script>
 <script type="text/javascript" charset="utf-8" src="utils.js"></script>
 <script type="text/javascript" charset="utf-8" src="lib/lodash.underscore.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="lib/js-xlsx/dist/xlsx.core.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="radars/radarData.js"></script>
 
 <style type="text/css" media="screen">
@@ -17,17 +18,41 @@
 
 </style>
 <script type="text/javascript" src="radar.js" charset="utf-8"></script>
-<script type="text/javascript" charset="utf-8">
-
-</script>
 
 </head>
 
 <body onload="init(h,w);">
 <h1 id="title" style="text-align: center;"></h1>
+<input type="file" id="files" name="files[]" />
 <div id="radar"></div>
 <div>
 <p>^ Item in dispute, additional discussion and context to be provided.</p>
 </div>
 </body>
+
+<script type="text/javascript" charset="utf-8">
+
+function handleFile(e) {
+  var files = e.target.files;
+  var i,f;
+  for (i = 0, f = files[i]; i != files.length; ++i) {
+    var reader = new FileReader();
+    var name = f.name;
+    reader.onload = function(e) {
+      var data = e.target.result;
+
+      var workbook = XLSX.read(data, {type: 'binary'});
+
+      /* DO SOMETHING WITH workbook HERE */
+      console.log("Ready to start");
+      var first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[first_sheet_name];
+      console.log("A1 is " + worksheet['A1']);
+    };
+    reader.readAsBinaryString(f);
+  }
+}
+document.getElementById('files').addEventListener('change', handleFile, false);
+
+</script>
 </html>
