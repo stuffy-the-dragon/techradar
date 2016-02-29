@@ -8,18 +8,11 @@ I love the ThoughtWorks Radar. But it is for all clients, averaged out across in
 
 It is a powerful talking point, but I need it to be customised for particular circumstances.
 
-This Technology Radar has pretty simple functionality, uses json data source and renders SVG within html.
+This Technology Radar has pretty simple functionality, uses excel spreadsheet and renders SVG within html.
 
-The data currently is provided in a radial format. I chose this and SVG, for the scalable properties. In practice, a table based structure, that automatically lays out the points could be more useful.
+A sample spreadsheet is provided. The blips are automatically layed out accoriding to their stage and quadrant.
+Some more options can be changed in the radarData.js file. If the quadrant or stage names are changed in the spreadsheet they should also be updated in the radarData.js file.
 
-Eg. {name:'Cool Tech', r:50, t:30}
-Appears in the Top Right Quadrant, in the inner most "Adopt" Sector.
-
-Eg. {name:'Bright Shiny Toy 5', r:390, t:30}
-Appears in the Top Right Quadrant, in the outer most "Hold" Sector.
-
-Appears in the Lower Left Quadrant, in the second "Trial" Sector.
-
-Where r = radius, and t = theta; the degrees in radians. with 0/360 degrees being the typical right hand x line rotating in an anti-clockwise direction.
+Internally polar coordinates are used to position the blips with 0 degrees starting in the east position.
 
 See http://en.wikipedia.org/wiki/Polar_coordinates for more details.
