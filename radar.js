@@ -93,8 +93,10 @@ for (var i = 0; i < radar_data.length; i++) {
     for (var stageIdx in _(itemsByStage).keys()) {
 
         if (stageIdx > 0) {
-            offsetIndex = offsetIndex + itemsByStage[stageIdx-1].length + 1; 
-            console.log("offsetIndex = " + itemsByStage[stageIdx-1].length, offsetIndex );
+            var length = 0;
+            if (itemsByStage[stageIdx-1] !== undefined) length = itemsByStage[stageIdx-1].length;
+            offsetIndex = offsetIndex + length + 1; 
+            console.log("offsetIndex = " + length, offsetIndex );
         }
 
         radar.add(pv.Label)         
