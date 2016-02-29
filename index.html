@@ -60,14 +60,14 @@ function rowsToArray(ws) {
     
   for(z in ws) {
       if( z[0] === '!' ) continue;
-      if( z[1] === '1' ) continue; // Consider the first row as headings
+      if( XLSX.utils.decode_cell(z).r === 0 ) continue; // Consider the first row as headings
       // console.log(z + " is " + ws[z].v);
-      if( cur_row === XLSX.utils.decode_row(z[1])) {
+      if( cur_row === XLSX.utils.decode_cell(z).r) {
           temp_row.push(ws[z].v);
 
       } else {
-          cur_row = XLSX.utils.decode_row(z[1]);
-          if ( temp_row.length > 0 ) {
+          cur_row = XLSX.utils.decode_cell(z).r;
+          if( temp_row.length > 0 ) {
               rows.push(temp_row);
           }
           temp_row = [ws[z].v];
