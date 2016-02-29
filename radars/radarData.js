@@ -11,6 +11,13 @@ var radar_arcs = [
                  // ,{'r':500,'name':'Possible Extra if you want it'}
                  ];
 
+var radar_angle_range = [
+                          {'s':100,'e':170,'name':'Techniques'}
+                         ,{'s':10,'e':80,'name':'Tools'}
+                         ,{'s':190,'e':260,'name':'Platforms'}
+                         ,{'s':280,'e':350,'name':'Languages & Frameworks'}
+                        ];
+
 //This is your raw data
 //
 // Key
