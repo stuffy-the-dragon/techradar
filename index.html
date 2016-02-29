@@ -102,7 +102,7 @@ function arrayToRadarItem(arr, cat) {
 function arcNameToRadius(n) {
 
     for ( a in radar_arcs ) {
-        if ( n === radar_arcs[a].name ) return radar_arcs[a].r + 50; // TODO hard coded
+        if ( n === radar_arcs[a].name ) return radar_arcs[a].r - 50; // TODO hard coded
     }
 
     return 0; // Did not match any of the names
