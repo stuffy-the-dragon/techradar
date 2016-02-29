@@ -39,15 +39,20 @@ function handleFile(e) {
     var reader = new FileReader();
     var name = f.name;
     reader.onload = function(e) {
-      var data = e.target.result;
+      var d = e.target.result;
 
-      var workbook = XLSX.read(data, {type: 'binary'});
+      var workbook = XLSX.read(d, {type: 'binary'});
 
       /* DO SOMETHING WITH workbook HERE */
       console.log("Ready to start");
       var first_sheet_name = workbook.SheetNames[0];
       var worksheet = workbook.Sheets[first_sheet_name];
       console.log(rowsToArray(worksheet));
+      var a = rowsToArray(worksheet);
+      for(quad in radar_data){
+          radar_data[quad].items = arrayToRadarItem(a, radar_data[quad].quadrant);
+      }
+      init(h,w); // Redraw
     };
     reader.readAsBinaryString(f);
   }
@@ -78,6 +83,32 @@ function rowsToArray(ws) {
   rows.push(temp_row);
   return rows;
 }
+
+function arrayToRadarItem(arr, cat) {
+    var items = [];
+    var pos_name = 1; // Name
+    var pos_cat = 2; // Catagory
+    var pos_rec = 3; // Recommendation
+
+    for( i in arr ) {
+        if( arr[i][pos_cat] != cat ) continue;
+        var radius = arcNameToRadius(arr[i][pos_rec]); // TODO Hard coded value here
+        var temp_item = {"name":arr[i][pos_cat], "pc":{"r":radius,"t":120},"movement":"c"};
+        items.push(temp_item);
+    }
+    return items;
+}
+
+function arcNameToRadius(n) {
+
+    for ( a in radar_arcs ) {
+        if ( n === radar_arcs[a].name ) return radar_arcs[a].r + 50; // TODO hard coded
+    }
+
+    return 0; // Did not match any of the names
+
+}
+
 document.getElementById('files').addEventListener('change', handleFile, false);
 
 </script>
