@@ -121,9 +121,10 @@ function arcNameToRadius(n) {
 }
 
 function catNameToAngle(catagory){
-    for (c in radar_angle_range) {
-        if (catagory === radar_angle_range[c].name ){
-            return Math.floor((Math.random() * (radar_angle_range[c].e - radar_angle_range[c].s)) + radar_angle_range[c].s);
+    var step = 360 / radar_data.length;
+    for (c in radar_data) {
+        if (catagory === radar_data[c].quadrant ){
+            return ((2 * step - 90) - Math.floor((Math.random() * (step - 10)) + 5 ) + (c *  step)); //TODO hard coded buffer value
         }
     }
     return 0; // Did not match any of the catagories
