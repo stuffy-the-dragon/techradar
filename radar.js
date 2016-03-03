@@ -4,7 +4,12 @@ function init(h,w) {
  var radar = new pv.Panel()
       .width(w)
       .height(h)
-      .canvas('radar')
+      .canvas('radar');
+
+ var labels = new pv.Panel()
+      .width(w)
+      .height(h)
+      .canvas('radar-labels');
 
 // arcs
 radar.add(pv.Dot)
@@ -71,10 +76,12 @@ var total_index = 1;
 //TODO: Super fragile: re-order the items, by radius, in order to logically group by the rings.
 for (var i = 0; i < radar_data.length; i++) {
     //adjust top by the number of headings.
+    var label_col = w / radar_data.length * i + fontSize;
+
     if (lastQuadrant != radar_data[i].quadrant) {
-        radar.add(pv.Label)         
-            .left( radar_data[i].left )         
-            .top( radar_data[i].top )  
+        labels.add(pv.Label)         
+            .left(label_col)         
+            .top( quadrantFontSize )  
             .text(  radar_data[i].quadrant )		 
             .strokeStyle( radar_data[i].color )
             .fillStyle( radar_data[i].color )                    
@@ -97,21 +104,21 @@ for (var i = 0; i < radar_data.length; i++) {
             console.log("offsetIndex = " + length, offsetIndex );
         }
 
-        radar.add(pv.Label)         
-            .left( radar_data[i].left + headingFontSize )
-            .top( radar_data[i].top + quadrantFontSize + spacer + (stageIdx * headingFontSize) + (offsetIndex * fontSize) )
+        labels.add(pv.Label)         
+            .left( label_col )
+            .top( (2 * quadrantFontSize) + spacer + (stageIdx * headingFontSize) + (offsetIndex * fontSize) )
             .text( radar_arcs[stageIdx].name)
             .strokeStyle( '#cccccc' )
             .fillStyle( '#cccccc')                    
             .font(headingFontSize + "px Courier New");
 
-    radar.add(pv.Label)             
-        .left( radar_data[i].left )         
-        .top( radar_data[i].top + quadrantFontSize + spacer + (stageIdx * headingFontSize) + (offsetIndex * fontSize) )
+    labels.add(pv.Label)             
+        .left( label_col )         
+        .top( (2 * quadrantFontSize) + spacer + (stageIdx * headingFontSize) + (offsetIndex * fontSize) )
         .strokeStyle( radar_data[i].color )
         .fillStyle( radar_data[i].color )                    
         .add( pv.Dot )            
-            .def("i", radar_data[i].top + quadrantFontSize + spacer + (stageIdx * headingFontSize) + spacer  + (offsetIndex * fontSize) )
+            .def("i", (2 * quadrantFontSize) + spacer + (stageIdx * headingFontSize) + spacer  + (offsetIndex * fontSize) )
             .data(itemsByStage[stageIdx])            
             .top( function() { return ( this.i() + (this.index * fontSize) );} )   
             .shape( function(d) {return (d.movement === 't' ? "triangle" : "circle");})                 
@@ -152,5 +159,8 @@ for (var i = 0; i < radar_data.length; i++) {
        
  radar.anchor('radar');
  radar.render();
+
+ labels.anchor('radar-labels');
+ labels.render();
      
   };
