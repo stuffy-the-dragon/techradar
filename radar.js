@@ -99,7 +99,12 @@ for (var i = 0; i < radar_data.length; i++) {
 
         if (stageIdx > 0) {
             var length = 0;
-            if (itemsByStage[stageIdx-1] !== undefined) length = itemsByStage[stageIdx-1].length;
+            for(var prev = 1; prev <= stageIdx; prev++){
+                if (itemsByStage[stageIdx-prev] !== undefined){
+                   length = itemsByStage[stageIdx-prev].length;
+                   break;
+                }
+            }
             offsetIndex = offsetIndex + length + 1; 
             console.log("offsetIndex = " + length, offsetIndex );
         }
