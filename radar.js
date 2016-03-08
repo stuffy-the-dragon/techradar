@@ -144,7 +144,7 @@ for (var i = 0; i < radar_data.length; i++) {
 };
 
 
-var blip_positions = [];
+radar.blip_positions = [];
 
 radar.handleFile = function(e) {
   var files = e.target.files;
@@ -216,7 +216,7 @@ radar.arrayToRadarItem = function(arr, cat) {
             overlapping = radar.checkOverlappingBlip(radius, angle);
             count = count + 1;
         }
-        blip_positions.push({"r":radius, "t":angle});
+        radar.blip_positions.push({"r":radius, "t":angle});
 
         var temp_item = {"name":arr[i][pos_name], "pc":{"r":radius,"t":angle},"movement":"c"};
         items.push(temp_item);
@@ -245,8 +245,8 @@ radar.catNameToAngle = function(catagory){
 }
 
 radar.checkOverlappingBlip = function(r, t){
-    for (pos in blip_positions){
-        if(radar.polar_distance({"r":r,"t":t}, blip_positions[pos]) < 20) return true; //TODO hard coded value
+    for (pos in radar.blip_positions){
+        if(radar.polar_distance({"r":r,"t":t}, radar.blip_positions[pos]) < 20) return true; //TODO hard coded value
     }
     return false;
 }
