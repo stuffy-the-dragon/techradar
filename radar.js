@@ -1,7 +1,9 @@
-function draw(h,w) {
+var radar = {};
+
+radar.draw = function(h,w) {
   $('#title').text(document.title);
 
- var radar = new pv.Panel()
+ var radar_panel = new pv.Panel()
       .width(w)
       .height(h)
       .canvas('radar');
@@ -12,7 +14,7 @@ function draw(h,w) {
       .canvas('radar-labels');
 
 // arcs
-radar.add(pv.Dot)
+radar_panel.add(pv.Dot)
        .data(radar_arcs)
        .left(w/2)
        .bottom(h/2)
@@ -26,7 +28,7 @@ var step = 360/radar_data.length;
 var outerWidth = radar_arcs[radar_arcs.length-1].r;
 
 for (var i=0;i<=numberOfQuadrants;++i) {
-   radar.add(pv.Line)
+   radar_panel.add(pv.Line)
      .data([0,step*i])
      .lineWidth(1)
      .top(function(d) { return d===0 ? h/2 : h/2 + Math.cos(pv.radians(d)) * outerWidth; })
@@ -107,7 +109,7 @@ for (var i = 0; i < radar_data.length; i++) {
                 .add(pv.Label)
                 .text(function(d) {return radar_quadrant_ctr++ + ". " + d.name;} );
 
-    radar.add(pv.Dot)
+    radar_panel.add(pv.Dot)
       .def("active", false)
       .data(itemsByStage[stageIdx])
       .size( function(d) { return ( d.blipSize !== undefined ? d.blipSize : 70 ); })
@@ -134,8 +136,8 @@ for (var i = 0; i < radar_data.length; i++) {
     }
 }
 
- radar.anchor('radar');
- radar.render();
+ radar_panel.anchor('radar');
+ radar_panel.render();
 
  labels.anchor('radar-labels');
  labels.render();
@@ -144,7 +146,7 @@ for (var i = 0; i < radar_data.length; i++) {
 
 var blip_positions = [];
 
-function handleFile(e) {
+radar.handleFile = function(e) {
   var files = e.target.files;
   var i,f;
   for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -155,24 +157,23 @@ function handleFile(e) {
 
       var workbook = XLSX.read(d, {type: 'binary'});
 
-      /* DO SOMETHING WITH workbook HERE */
       console.log("Ready to start");
       var first_sheet_name = workbook.SheetNames[9];
       var worksheet = workbook.Sheets[first_sheet_name];
-      console.log(rowsToArray(worksheet));
-      var a = rowsToArray(worksheet);
+      console.log(radar.rowsToArray(worksheet));
+      var a = radar.rowsToArray(worksheet);
       for(quad in radar_data){
-          radar_data[quad].items = arrayToRadarItem(a, radar_data[quad].quadrant);
+          radar_data[quad].items = radar.arrayToRadarItem(a, radar_data[quad].quadrant);
       }
-      draw(h,w); // Redraw
-      encode_as_img_and_link("#radar");
-      encode_as_img_and_link("#radar-labels");
+      radar.draw(h,w); // Redraw
+      radar.encode_as_img_and_link("#radar");
+      radar.encode_as_img_and_link("#radar-labels");
     };
     reader.readAsBinaryString(f);
   }
 }
 
-function rowsToArray(ws) {
+radar.rowsToArray = function(ws) {
   var cur_row = 0;
   var rows = [];
   var temp_row = [];
@@ -198,7 +199,7 @@ function rowsToArray(ws) {
   return rows;
 }
 
-function arrayToRadarItem(arr, cat) {
+radar.arrayToRadarItem = function(arr, cat) {
     var items = [];
     var pos_name = 1; // Name
     var pos_cat = 2; // Catagory
@@ -210,9 +211,9 @@ function arrayToRadarItem(arr, cat) {
         var count = 0;
         while(overlapping == true && count < 100)
         {
-            var radius = arcNameToRadius(arr[i][pos_rec]); 
-            var angle = catNameToAngle(cat);
-            overlapping = checkOverlappingBlip(radius, angle);
+            var radius = radar.arcNameToRadius(arr[i][pos_rec]); 
+            var angle = radar.catNameToAngle(cat);
+            overlapping = radar.checkOverlappingBlip(radius, angle);
             count = count + 1;
         }
         blip_positions.push({"r":radius, "t":angle});
@@ -223,7 +224,7 @@ function arrayToRadarItem(arr, cat) {
     return items;
 }
 
-function arcNameToRadius(n) {
+radar.arcNameToRadius = function(n) {
 
     for ( a in radar_arcs ) {
         if ( n === radar_arcs[a].name ){
@@ -233,7 +234,7 @@ function arcNameToRadius(n) {
     return 0; // Did not match any of the names
 }
 
-function catNameToAngle(catagory){
+radar.catNameToAngle = function(catagory){
     var step = 360 / radar_data.length;
     for (c in radar_data) {
         if (catagory === radar_data[c].quadrant ){
@@ -243,20 +244,20 @@ function catNameToAngle(catagory){
     return 0; // Did not match any of the catagories
 }
 
-function checkOverlappingBlip(r, t){
+radar.checkOverlappingBlip = function(r, t){
     for (pos in blip_positions){
-        if(polar_distance({"r":r,"t":t}, blip_positions[pos]) < 20) return true; //TODO hard coded value
+        if(radar.polar_distance({"r":r,"t":t}, blip_positions[pos]) < 20) return true; //TODO hard coded value
     }
     return false;
 }
 
-function polar_distance(a, b){
+radar.polar_distance = function(a, b){
     var rad_a = a.t * (2 * Math.PI / 360); // Degrees to rad
     var rad_b = b.t * (2 * Math.PI / 360);
     return Math.sqrt(Math.pow(a.r, 2) + Math.pow(b.r, 2) - (2 * a.r * b.r * Math.cos(rad_b - rad_a)));
 }
 
-function encode_as_img_and_link(id){
+radar.encode_as_img_and_link = function(id){
  // Add some critical information
  $("svg").attr({ version: '1.1' , xmlns:"http://www.w3.org/2000/svg"});
 
