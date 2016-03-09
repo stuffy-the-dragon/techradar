@@ -155,11 +155,21 @@ radar.handleFile = function(e) {
     reader.onload = function(e) {
       var d = e.target.result;
 
-      var workbook = XLSX.read(d, {type: 'binary'});
+      radar.workbook = XLSX.read(d, {type: 'binary'});
 
-      console.log("Ready to start");
-      var first_sheet_name = workbook.SheetNames[9];
-      var worksheet = workbook.Sheets[first_sheet_name];
+      console.log("Populating sheet names");
+      for(sheet in radar.workbook.SheetNames) {
+          $("#sheets").append($("<option/>", {html: radar.workbook.SheetNames[sheet]}));
+      }
+      $("#sheet-row").prop("hidden", false);
+    };
+    reader.readAsBinaryString(f);
+  }
+}
+
+radar.handleSheetSelect = function(e) {
+      console.log("Rendering radar");
+      var worksheet = radar.workbook.Sheets[e.target.value];
       console.log(radar.rowsToArray(worksheet));
       var a = radar.rowsToArray(worksheet);
       for(quad in radar_data){
@@ -168,9 +178,6 @@ radar.handleFile = function(e) {
       radar.draw(h,w); // Redraw
       radar.encode_as_img_and_link("#radar");
       radar.encode_as_img_and_link("#radar-labels");
-    };
-    reader.readAsBinaryString(f);
-  }
 }
 
 radar.rowsToArray = function(ws) {

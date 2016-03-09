@@ -21,8 +21,26 @@
 </head>
 
 <body>
-<h1 id="title" style="text-align: center;">Select the spreadsheet to plot</h1>
-<input type="file" id="files" name="files[]" />
+<h1 id="title" style="text-align: center;">Technology Radar Plotter</h1>
+<table>
+    <tr>
+        <td>
+            Spreadsheet file (.xlsx):
+        </td>
+        <td>
+            <input type="file" id="files" name="files[]" />
+        </td>
+    </tr>
+    <tr id="sheet-row" hidden="true">
+        <td>
+            Sheet name with data:
+        </td>
+        <td>
+            <select id="sheets">
+            </select>
+        </td>
+    </tr>
+</table>
 <div id="radar"></div>
 <div>
 </div>
@@ -32,5 +50,6 @@
 
 <script type="text/javascript" charset="utf-8">
   document.getElementById('files').addEventListener('change', radar.handleFile, false);
+  document.getElementById('sheets').addEventListener('change', radar.handleSheetSelect, false);
 </script>
 </html>
